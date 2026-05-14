@@ -1,0 +1,8 @@
+{
+  "name": "Remix: Remix: Momentum - Organiser",
+  "description": "An AI-powered productivity dashboard for organizing tasks, events, and notes with a smart assistant and customizable themes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

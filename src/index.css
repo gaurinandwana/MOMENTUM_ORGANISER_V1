@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-brand-primary: #141414;
+  --color-brand-accent: var(--accent-color, #3B82F6);
+}
+
+@layer base {
+  :root {
+    --accent-color: #3B82F6;
+  }
+
+  :root[data-theme='rose'] {
+    --accent-color: #E11D48;
+  }
+
+  body {
+    @apply font-sans antialiased text-gray-900 bg-white transition-colors duration-300;
+  }
+
+  .dark body {
+    @apply text-gray-100 bg-[#0A0A0A];
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/70 backdrop-blur-md border border-white/20 dark:bg-black/40 dark:border-white/10;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+  }
+
+  .achievement-glow {
+    @apply relative overflow-hidden;
+  }
+
+  .achievement-glow::after {
+    @apply content-[''] absolute -inset-[100%] bg-linear-to-r from-transparent via-white/20 to-transparent -rotate-45 transition-all duration-1000;
+  }
+
+  .achievement-glow:hover::after {
+    @apply translate-x-[200%];
+  }
+
+  .nav-btn {
+    @apply flex flex-col items-center justify-center gap-1 p-2 text-gray-500 hover:text-brand-accent transition-colors;
+  }
+
+  .nav-btn.active {
+    @apply text-brand-accent;
+  }
+}
