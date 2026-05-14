@@ -36,50 +36,47 @@ async function startServer() {
         contents: `User Input: "${prompt}"`,
         config: {
           temperature: 0.1,
-          systemInstruction: `You are a helpful Productivity AI Assistant. You organize the user's life by extracting actionable items (tasks, events, notes).
+          systemInstruction: `You are Momentum AI, a productivity assistant. Extract actionable items from user input and respond contextually.
           
-          System Context:
-          - Today: ${context?.currentDate || new Date().toISOString().split('T')[0]}
-          - Time: ${context?.currentTime || new Date().toLocaleTimeString()}
+          Context: Today is ${context?.currentDate || new Date().toISOString().split('T')[0]}, time is ${context?.currentTime || new Date().toLocaleTimeString()}.
 
-          Return a JSON object with an "actions" array.
-          
-          Action Types & Rules:
-          1. CREATE_TASK: Extracts a todo item.
-          2. CREATE_EVENT: Extracts a calendar event.
-             - CRITICAL: 'title' MUST NOT contain times or dates! Extract times to 'startTime'/'endTime'. Extract dates to 'date'.
-             - 'title' must be 1-3 words (e.g. "Dance").
-             - 'startTime'/'endTime' must be 24-hour (e.g. "16:00").
-          3. CREATE_NOTE: Extracts a note.
-          4. CHAT_RESPONSE: A reply to the user. Every user message MUST trigger at least one CHAT_RESPONSE. Use the "message" field.
-
-          Example User Input: "dance at 4pm"
-          Example Expected Output:
+          Return ONLY a JSON object:
           {
             "actions": [
-              { "type": "CREATE_EVENT", "payload": { "title": "Dance", "date": "2026-05-14", "startTime": "16:00", "endTime": "17:00" } },
-              { "type": "CHAT_RESPONSE", "payload": { "message": "I've added Dance to your calendar for 4:00 PM today." } }
+              { 
+                "type": "CREATE_TASK" | "CREATE_EVENT" | "CREATE_NOTE" | "CHAT_RESPONSE",
+                "payload": { ... }
+              }
             ]
-          }`,
+          }
+          
+          Rules:
+          - Every response MUST have a CHAT_RESPONSE action.
+          - CREATE_EVENT: For calendar events. Extract 'title' (max 3 words, no times), 'date' (YYYY-MM-DD), 'startTime', 'endTime' (HH:mm). Default duration 1h.
+          - CREATE_TASK: For todos. Extract 'title' (the main task name) and 'description'.
+          - CREATE_NOTE: For thoughts/notes. Extract 'title' and 'content'.
+          - Consistency: Do not create redundant actions (e.g., if a user asks to add an event, do NOT also create a task unless specifically requested). Use 'title' for the heading of any item.`,
           responseMimeType: "application/json"
         },
       });
 
-      let textResponse = response.text || "";
-      if (textResponse.startsWith("```json")) {
-         textResponse = textResponse.replace(/^```json\n?/, "").replace(/\n?```$/, "");
-      } else if (textResponse.startsWith("```")) {
-         textResponse = textResponse.replace(/^```\n?/, "").replace(/\n?```$/, "");
+      const textResponse = response.text;
+      if (!textResponse) {
+        throw new Error("Empty response from AI");
       }
       
       const result = JSON.parse(textResponse);
       res.json(result);
     } catch (error: any) {
       console.error("AI Error:", error);
-      let errorMessage = "Failed to process AI request. Please try again later.";
-      if (error?.status === 429 || error?.message?.includes("429") || error?.message?.includes("Quota exceeded")) {
-        errorMessage = "I'm receiving too many requests. Please wait a few seconds and try again.";
+      let errorMessage = "Sorry, I encountered an error processing your request. Please try again.";
+      
+      if (error?.status === 429 || error?.message?.includes("429") || error?.message?.includes("Quota exceeded") || error?.message?.includes("RESOURCE_EXHAUSTED")) {
+        errorMessage = "I'm hitting my free-tier rate limits. Please wait 10-20 seconds or upgrade your API key in Settings > Secrets for higher limits.";
+      } else if (error?.status === 403 || error?.message?.includes("403") || error?.message?.includes("PERMISSION_DENIED")) {
+        errorMessage = "I don't have permission to use the AI model. Please check your API key in Settings > Secrets.";
       }
+      
       res.status(500).json({ error: errorMessage });
     }
   });

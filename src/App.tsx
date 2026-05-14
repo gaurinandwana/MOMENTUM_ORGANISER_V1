@@ -1,4 +1,4 @@
-import { useState, useEffect, ReactNode } from 'react';
+import { useState, useEffect, useRef, ReactNode } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   CheckCircle2, 
@@ -195,7 +195,7 @@ export default function App() {
         case 'CREATE_TASK':
           const newTask: Task = {
             id: crypto.randomUUID(),
-            text: action.payload.text || 'Imported Task',
+            text: action.payload.title || action.payload.text || 'New Task',
             description: action.payload.description || '',
             completed: false,
             createdAt: Date.now(),
@@ -234,8 +234,8 @@ export default function App() {
         case 'CREATE_NOTE':
           const newNote: Note = {
             id: crypto.randomUUID(),
-            title: action.payload.title || 'Imported Note',
-            content: action.payload.content || '',
+            title: action.payload.title || action.payload.text || 'Untitled Note',
+            content: action.payload.content || action.payload.description || '',
             createdAt: Date.now()
           };
           setNotes(prev => [newNote, ...prev]);
@@ -554,7 +554,13 @@ function AssistantView({ tasks, events, notes, onExecuteActions }: {
     { role: 'assistant', text: "I'm your Productivity Assistant. Tell me what's on your mind—tasks, events, or thoughts—and I'll organize it for you instantly." }
   ]);
   const [isLoading, setIsLoading] = useState(false);
-  const scrollRef = useState<HTMLDivElement | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, isLoading]);
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
@@ -619,7 +625,7 @@ function AssistantView({ tasks, events, notes, onExecuteActions }: {
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto space-y-4 pr-2 scrollbar-hide pb-4">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-4 pr-2 scrollbar-hide pb-4">
         {messages.map((msg, i) => (
           <motion.div 
             key={i}

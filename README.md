@@ -1,66 +1,20 @@
-🚀 Momentum
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+</div>
 
-Momentum is an all-in-one productivity workspace that combines tasks, calendar, notes, and progress tracking in one clean, minimal interface — enhanced with AI integration to help you stay organised, focused, and consistent.
+# Run and deploy your AI Studio app
 
-Stop switching between multiple apps. Build momentum in one place.
+This contains everything you need to run your app locally.
 
-⸻
+View your app in AI Studio: https://ai.studio/apps/a5914920-692b-4b5e-aa6d-8257aeb9aefc
 
-✨ Features
+## Run Locally
 
-* 📝 Task Management – Create, organise, and track daily tasks
-* 📅 Calendar View – Plan your schedule and stay on top of deadlines
-* 📒 Notes System – Quickly capture thoughts and ideas
-* 📊 Progress Tracking – Monitor productivity and completion trends
-* 🤖 AI Integration – Smart assistance for better planning and focus
-* 🎯 Minimal UI – Clean, distraction-free design for better flow
+**Prerequisites:**  Node.js
 
-⸻
 
-💡 Why Momentum?
-
-Most productivity tools are either:
-
-* Too complex and overwhelming
-* Or too simple and fragmented
-
-Momentum solves this by bringing everything into one focused workspace — designed to reduce friction and help you actually get things done.
-
-⸻
-
-🛠️ Tech Stack
-
-* Frontend: React / Next.js (edit if needed)
-* Styling: Tailwind CSS / CSS Modules
-* Backend: (add if you used one)
-* Database: (add if used, e.g. Firebase / MongoDB)
-* Deployment: Vercel
-
-🚀 Live Demo
-
-👉 https://momentum-organiser.vercel.app/
-📌 Learnings
-
-Building Momentum helped me understand:
-
-* The importance of clean UI/UX in productivity apps
-* How small design decisions impact usability
-* Why shipping early is better than perfecting endlessly
-
-⸻
-
-🔮 Future Improvements
-
-* Google Calendar sync
-* Advanced AI task prioritisation
-* Mobile responsiveness improvements
-* Focus / Pomodoro mode
-* Analytics dashboard (daily/weekly productivity insights)
-
-⸻
-
-🤝 Contributing
-
-This is an independent project, but feedback, suggestions, and ideas are always welcome.
-
-Feel free to open an issue or connect.
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`
